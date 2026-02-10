@@ -23,7 +23,7 @@ interface UserCreationAttributes {
   name: string;
   email: string;
   password: string;
-  role: string;
+  role?: string;
 }
 
 @Table({
@@ -44,7 +44,7 @@ export class User extends Model<UserAttributes, UserCreationAttributes> {
   declare password: string;
 
   @AllowNull(false)
-  @Default(UserRoles.USER)
+  @Default(UserRoles.CUSTOMER)
   @Column(DataType.STRING)
   declare role: UserRoles;
 

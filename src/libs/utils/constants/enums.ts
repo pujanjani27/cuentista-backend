@@ -9,5 +9,5 @@ export enum ApiTagType {
 
 export enum UserRoles {
   ADMIN = 'admin',
-  USER = 'user',
+  CUSTOMER = 'customer',
 }
