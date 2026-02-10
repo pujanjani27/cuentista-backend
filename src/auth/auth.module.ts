@@ -22,6 +22,9 @@ import { ConfigService } from '@nestjs/config';
             pass: config.get('EMAIL_PASSWORD'),
           },
         },
+        defaults: {
+          from: config.get('EMAIL_FROM_USER'),
+        },
       }),
     }),
   ],
