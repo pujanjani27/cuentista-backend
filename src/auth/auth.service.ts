@@ -50,7 +50,7 @@ export class AuthService {
       where: { email },
     });
 
-    if (!user) return;
+    if (!user) throw new BadRequestException(Messages.NOT_FOUND);
 
     const token = crypto.randomBytes(32).toString('hex');
 
@@ -85,7 +85,7 @@ export class AuthService {
       },
     });
 
-    if (!user) throw new BadRequestException();
+    if (!user) throw new BadRequestException(Messages.NOT_FOUND);
 
     user.password = password;
 
