@@ -12,7 +12,7 @@ export enum Messages {
   ADD_SUCCESS = 'added successfully.',
   FAILED_TO = 'Failed to',
   INTERNAL_SERVER_ERROR = 'Internal server error.',
-  PASSWORD_UPDATED = 'Password updated successfully.',
   UPDATED = 'updated successfully.',
   DELETED = 'deleted successfully.',
+  RESET_LINK_SENT = 'password reset link has been sent.',
 }
