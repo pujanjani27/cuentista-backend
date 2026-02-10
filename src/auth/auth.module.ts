@@ -1,12 +1,30 @@
 import { Module } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { AuthController } from './auth.controller';
-import { JwtModule } from '@nestjs/jwt';
 import { SequelizeModule } from '@nestjs/sequelize';
 import { User } from 'src/models/user.model';
+import { MailerModule } from '@nestjs-modules/mailer';
+import { ConfigService } from '@nestjs/config';
 
 @Module({
-  imports: [JwtModule.register({}), SequelizeModule.forFeature([User])],
+  imports: [
+    SequelizeModule.forFeature([User]),
+
+    MailerModule.forRootAsync({
+      inject: [ConfigService],
+      useFactory: (config: ConfigService) => ({
+        transport: {
+          host: config.get('EMAIL_HOST'),
+          port: config.get('EMAIL_PORT'),
+          secure: false,
+          auth: {
+            user: config.get('EMAIL_USER'),
+            pass: config.get('EMAIL_PASSWORD'),
+          },
+        },
+      }),
+    }),
+  ],
   controllers: [AuthController],
   providers: [AuthService],
 })
