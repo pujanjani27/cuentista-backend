@@ -1,10 +1,9 @@
 import { Controller, Post, Body, HttpStatus, HttpCode } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { LoginDto } from './dto/login.dto';
+import { LoginDto, ForgetPassDto, ResetPassDto } from './dto';
 import { responseHandler } from 'src/libs/helpers/response.helper';
 import { StatusType } from 'src/libs/utils/constants/enums';
 import { Messages } from 'src/libs/utils/constants/messages';
-import { ForgetPassDto } from './dto/forget-pass.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -23,7 +22,7 @@ export class AuthController {
     });
   }
 
-  @Post('/forget-pass')
+  @Post('/forget-password')
   @HttpCode(HttpStatus.OK)
   async forgetPassword(@Body() dto: ForgetPassDto) {
     await this.authService.forgetPassword(dto);
@@ -32,6 +31,18 @@ export class AuthController {
       status: StatusType.SUCCESS,
       statusCode: HttpStatus.OK,
       message: Messages.RESET_LINK_SENT,
+    });
+  }
+
+  @Post('/reset-password')
+  @HttpCode(HttpStatus.OK)
+  async resetPassword(@Body() dto: ResetPassDto) {
+    await this.authService.resetPassword(dto);
+
+    return responseHandler({
+      status: StatusType.SUCCESS,
+      statusCode: HttpStatus.OK,
+      message: Messages.PASSWORD_RESET_SUCCESS,
     });
   }
 }

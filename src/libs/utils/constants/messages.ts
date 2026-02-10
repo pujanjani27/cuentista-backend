@@ -15,4 +15,5 @@ export enum Messages {
   UPDATED = 'updated successfully.',
   DELETED = 'deleted successfully.',
   RESET_LINK_SENT = 'password reset link has been sent.',
+  PASSWORD_RESET_SUCCESS = 'password has been reset successfully.',
 }

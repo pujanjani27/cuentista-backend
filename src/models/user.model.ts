@@ -17,15 +17,15 @@ interface UserAttributes {
   email: string;
   password: string;
   role: string;
-  resetPasswordToken?: string;
-  resetPasswordExpiresAt?: Date;
+  resetPasswordToken?: string | null;
+  resetPasswordExpiresAt?: Date | null;
 }
 
 interface UserCreationAttributes {
   name: string;
   email: string;
   password: string;
-  role?: string;
+  role: string;
 }
 
 @Table({
@@ -45,16 +45,15 @@ export class User extends Model<UserAttributes, UserCreationAttributes> {
   @Column
   declare password: string;
 
-  @AllowNull(false)
   @Default(UserRoles.CUSTOMER)
   @Column(DataType.STRING)
   declare role: UserRoles;
 
-  @Column
-  declare resetPasswordToken?: string;
+  @Column(DataType.STRING)
+  declare resetPasswordToken: string | null;
 
-  @Column
-  declare resetPasswordExpiresAt?: Date;
+  @Column(DataType.DATE)
+  declare resetPasswordExpiresAt: Date | null;
 
   @BeforeCreate
   @BeforeUpdate

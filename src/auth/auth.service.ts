@@ -1,14 +1,18 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { InjectModel } from '@nestjs/sequelize';
 import { User } from 'src/models/user.model';
-import { LoginDto } from './dto/login.dto';
 import { Messages } from 'src/libs/utils/constants/messages';
 import { compare } from 'bcrypt';
-import { ForgetPassDto } from './dto/forget-pass.dto';
 import crypto from 'crypto';
 import { MailerService } from '@nestjs-modules/mailer';
+import { LoginDto, ForgetPassDto, ResetPassDto } from './dto';
+import { Op } from 'sequelize';
 
 @Injectable()
 export class AuthService {
@@ -56,12 +60,38 @@ export class AuthService {
     user.resetPasswordExpiresAt = new Date(Date.now() + 15 * 60 * 1000); // 15 min
     await user.save();
 
-    // const resetLink = '';
+    // const resetLink = `${this.config.get('FRONTEND_URL')}/reset-password?token=${token}`;
+
+    console.log(token);
 
     await this.mailerService.sendMail({
       to: user.email,
       subject: 'Reset Password',
       text: `Your reset token is: ${token}`,
     });
+  }
+
+  async resetPassword(dto: ResetPassDto) {
+    const { token, password } = dto;
+
+    const hashedToken = crypto.createHash('sha256').update(token).digest('hex');
+
+    const user = await this.userModel.findOne({
+      where: {
+        resetPasswordToken: hashedToken,
+        resetPasswordExpiresAt: {
+          [Op.gt]: new Date(),
+        },
+      },
+    });
+
+    if (!user) throw new BadRequestException();
+
+    user.password = password;
+
+    user.resetPasswordToken = null;
+    user.resetPasswordExpiresAt = null;
+
+    await user.save();
   }
 }
