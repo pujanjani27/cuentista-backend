@@ -4,11 +4,13 @@ import { LoginDto, ForgetPassDto, ResetPassDto } from './dto';
 import { responseHandler } from 'src/libs/helpers/response.helper';
 import { StatusType } from 'src/libs/utils/constants/enums';
 import { Messages } from 'src/libs/utils/constants/messages';
+import { ApiOperation } from '@nestjs/swagger';
 
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
+  @ApiOperation({ summary: 'Login' })
   @Post('login')
   @HttpCode(HttpStatus.OK)
   async login(@Body() dto: LoginDto) {
@@ -22,6 +24,7 @@ export class AuthController {
     });
   }
 
+  @ApiOperation({ summary: 'Forget Password' })
   @Post('/forget-password')
   @HttpCode(HttpStatus.OK)
   async forgetPassword(@Body() dto: ForgetPassDto) {
@@ -34,6 +37,7 @@ export class AuthController {
     });
   }
 
+  @ApiOperation({ summary: 'Reset Password' })
   @Post('/reset-password')
   @HttpCode(HttpStatus.OK)
   async resetPassword(@Body() dto: ResetPassDto) {
