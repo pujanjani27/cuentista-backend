@@ -17,6 +17,8 @@ interface UserAttributes {
   email: string;
   password: string;
   role: string;
+  resetPasswordToken?: string;
+  resetPasswordExpiresAt?: Date;
 }
 
 interface UserCreationAttributes {
@@ -47,6 +49,12 @@ export class User extends Model<UserAttributes, UserCreationAttributes> {
   @Default(UserRoles.CUSTOMER)
   @Column(DataType.STRING)
   declare role: UserRoles;
+
+  @Column
+  declare resetPasswordToken?: string;
+
+  @Column
+  declare resetPasswordExpiresAt?: Date;
 
   @BeforeCreate
   @BeforeUpdate
