@@ -9,6 +9,8 @@ async function bootstrap() {
 
   app.enableCors();
 
+  app.setGlobalPrefix('api');
+
   const config = new DocumentBuilder()
     .setTitle('Cuentista')
     .setDescription('Cuentista API documentation')
