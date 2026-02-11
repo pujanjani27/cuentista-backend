@@ -297,4 +297,8 @@ export class ProductsService {
       }
     });
   }
+
+  async remove(id: number) {
+    await this.productModel.destroy({ where: { id } });
+  }
 }

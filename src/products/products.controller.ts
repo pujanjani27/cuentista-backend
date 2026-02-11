@@ -3,6 +3,7 @@ import {
   Get,
   Post,
   Body,
+  Delete,
   UseGuards,
   HttpStatus,
   HttpCode,
@@ -87,6 +88,21 @@ export class ProductsController {
       status: StatusType.SUCCESS,
       statusCode: HttpStatus.OK,
       message: Messages.UPDATED,
+    });
+  }
+
+  @UseGuards(JwtGuard, RolesGuard)
+  @Roles(UserRoles.ADMIN)
+  @ApiOperation({ summary: 'Delete Product' })
+  @HttpCode(HttpStatus.OK)
+  @Delete(':id')
+  async remove(@Param('id') id: string) {
+    await this.productsService.remove(+id);
+
+    return responseHandler({
+      status: StatusType.SUCCESS,
+      statusCode: HttpStatus.OK,
+      message: Messages.DELETED,
     });
   }
 }
