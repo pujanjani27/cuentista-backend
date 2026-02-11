@@ -16,9 +16,6 @@ export interface RequestPayload extends Request {
   user: {
     id: number;
     email: string;
-    role: {
-      id: number;
-      name: string;
-    };
+    role: string;
   };
 }
