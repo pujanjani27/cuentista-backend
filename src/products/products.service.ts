@@ -11,6 +11,8 @@ import {
   ProductExpertise,
 } from 'src/models';
 import { InjectModel } from '@nestjs/sequelize';
+import { ListOfUserDto } from './dto/list-of-product.dto';
+import { Op, Order } from 'sequelize';
 
 @Injectable()
 export class ProductsService {
@@ -110,5 +112,42 @@ export class ProductsService {
         );
       }
     });
+  }
+
+  async findAll(query: ListOfUserDto) {
+    const { page = 1, limit = 10, sortValue, sortKey, search } = query;
+
+    const offset = (page - 1) * limit;
+
+    const where = {};
+
+    if (search) {
+      where['name'] = {
+        [Op.like]: `%${search}%`,
+      };
+    }
+
+    let order: Order = [];
+    if (sortKey && sortValue) {
+      order = [[sortKey, sortValue]];
+    }
+
+    const products = await this.productModel.findAndCountAll({
+      where,
+      order,
+      offset,
+      limit,
+      attributes: { exclude: ['description', 'contact_us'] },
+    });
+
+    return {
+      products: products.rows,
+      meta: {
+        currentPage: page,
+        limit,
+        total_products: products.count,
+        total_pages: Math.ceil(products.count / limit),
+      },
+    };
   }
 }
