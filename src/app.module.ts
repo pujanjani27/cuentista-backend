@@ -5,6 +5,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { SequelizeModule } from '@nestjs/sequelize';
 import { AuthModule } from './auth/auth.module';
 import { JwtModule } from '@nestjs/jwt';
+import { ProductsModule } from './products/products.module';
 
 @Module({
   imports: [
@@ -40,6 +41,7 @@ import { JwtModule } from '@nestjs/jwt';
     }),
 
     AuthModule,
+    ProductsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
