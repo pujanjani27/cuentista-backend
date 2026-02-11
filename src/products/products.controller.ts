@@ -8,9 +8,11 @@ import {
   HttpCode,
   Query,
   Param,
+  Put,
 } from '@nestjs/common';
 import { ProductsService } from './products.service';
 import { CreateProductDto } from './dto/create-product.dto';
+import { UpdateProductDto } from './dto/update-product.dto';
 import { JwtGuard } from 'src/libs/services/guards/jwt.guard';
 import { RolesGuard } from 'src/libs/services/guards/role.guard';
 import { Roles } from 'src/libs/services/decorators/role.decorator';
@@ -67,6 +69,24 @@ export class ProductsController {
       status: StatusType.SUCCESS,
       statusCode: HttpStatus.OK,
       data,
+    });
+  }
+
+  @UseGuards(JwtGuard, RolesGuard)
+  @Roles(UserRoles.ADMIN)
+  @ApiOperation({ summary: 'Update Product' })
+  @HttpCode(HttpStatus.OK)
+  @Put(':id')
+  async update(
+    @Param('id') id: string,
+    @Body() updateProductDto: UpdateProductDto,
+  ) {
+    await this.productsService.update(+id, updateProductDto);
+
+    return responseHandler({
+      status: StatusType.SUCCESS,
+      statusCode: HttpStatus.OK,
+      message: Messages.UPDATED,
     });
   }
 }
