@@ -9,6 +9,7 @@ export enum Messages {
   ACCESS_DENIED = 'Access denied.',
   NOT_SELECTED = 'No any file selected.',
   INVALID_FILE = `Only JPG, JPEG, and PNG file formats are allowed.`,
+  INVALID_OTP = 'Invalid OTP.',
   ADD_SUCCESS = 'added successfully.',
   FAILED_TO = 'Failed to',
   INTERNAL_SERVER_ERROR = 'Internal server error.',
