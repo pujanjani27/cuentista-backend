@@ -150,4 +150,19 @@ export class ProductsService {
       },
     };
   }
+
+  async findOne(id: number) {
+    return await this.productModel.findByPk(id, {
+      include: [
+        { model: this.productImageModel },
+        { model: this.productBenefitModel },
+        {
+          model: this.productServiceModel,
+          include: [{ model: this.productServiceDetailModel }],
+        },
+        { model: this.productMethodologyModel },
+        { model: this.productExpertiseModel },
+      ],
+    });
+  }
 }

@@ -7,6 +7,7 @@ import {
   HttpStatus,
   HttpCode,
   Query,
+  Param,
 } from '@nestjs/common';
 import { ProductsService } from './products.service';
 import { CreateProductDto } from './dto/create-product.dto';
@@ -46,6 +47,21 @@ export class ProductsController {
   @Get()
   async findAll(@Query() query: ListOfUserDto) {
     const data = await this.productsService.findAll(query);
+
+    return responseHandler({
+      status: StatusType.SUCCESS,
+      statusCode: HttpStatus.OK,
+      data,
+    });
+  }
+
+  @UseGuards(JwtGuard, RolesGuard)
+  @Roles(UserRoles.ADMIN)
+  @ApiOperation({ summary: 'Get Product by ID' })
+  @HttpCode(HttpStatus.OK)
+  @Get(':id')
+  async findOne(@Param('id') id: string) {
+    const data = await this.productsService.findOne(+id);
 
     return responseHandler({
       status: StatusType.SUCCESS,
