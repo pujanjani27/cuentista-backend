@@ -17,8 +17,8 @@ interface UserAttributes {
   email: string;
   password: string;
   role: string;
-  resetPasswordToken?: string | null;
-  resetPasswordExpiresAt?: Date | null;
+  resetPasswordOtp?: string | null;
+  resetPasswordOtpExpiresAt?: Date | null;
 }
 
 interface UserCreationAttributes {
@@ -50,10 +50,10 @@ export class User extends Model<UserAttributes, UserCreationAttributes> {
   declare role: UserRoles;
 
   @Column(DataType.STRING)
-  declare resetPasswordToken: string | null;
+  declare resetPasswordOtp: string | null;
 
   @Column(DataType.DATE)
-  declare resetPasswordExpiresAt: Date | null;
+  declare resetPasswordOtpExpiresAt: Date | null;
 
   @BeforeCreate
   @BeforeUpdate

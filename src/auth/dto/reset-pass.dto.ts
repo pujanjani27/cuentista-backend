@@ -1,12 +1,21 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsString, IsStrongPassword } from 'class-validator';
+import {
+  IsNotEmpty,
+  IsString,
+  IsStrongPassword,
+  IsEmail,
+} from 'class-validator';
 import { Match } from '../../libs/services/decorators/match.decorator';
 
 export class ResetPassDto {
   @ApiProperty({ example: 'token' })
   @IsNotEmpty()
   @IsString()
-  token: string;
+  otp: number;
+
+  @IsNotEmpty()
+  @IsEmail()
+  email: string;
 
   @ApiProperty({ example: 'Password123!' })
   @IsNotEmpty()

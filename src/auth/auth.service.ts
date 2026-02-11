@@ -8,11 +8,10 @@ import { JwtService } from '@nestjs/jwt';
 import { InjectModel } from '@nestjs/sequelize';
 import { User } from 'src/models/user.model';
 import { Messages } from 'src/libs/utils/constants/messages';
-import { compare } from 'bcrypt';
-import crypto from 'crypto';
+import { compare, hash } from 'bcrypt';
 import { MailerService } from '@nestjs-modules/mailer';
 import { LoginDto, ForgetPassDto, ResetPassDto } from './dto';
-import { Op } from 'sequelize';
+import { resetPasswordTemplate } from 'src/libs/templates/reset-password.template';
 
 @Injectable()
 export class AuthService {
@@ -52,45 +51,46 @@ export class AuthService {
 
     if (!user) throw new BadRequestException(Messages.NOT_FOUND);
 
-    const token = crypto.randomBytes(32).toString('hex');
+    const otp = Math.floor(100000 + Math.random() * 900000);
 
-    const hashedToken = crypto.createHash('sha256').update(token).digest('hex');
+    const hashedOtp = await hash(otp.toString(), 10);
 
-    user.resetPasswordToken = hashedToken;
-    user.resetPasswordExpiresAt = new Date(Date.now() + 15 * 60 * 1000); // 15 min
+    user.resetPasswordOtp = hashedOtp;
+    user.resetPasswordOtpExpiresAt = new Date(Date.now() + 15 * 60 * 1000); // 15 min
     await user.save();
-
-    // const resetLink = `${this.config.get('FRONTEND_URL')}/reset-password?token=${token}`;
-
-    console.log(token);
 
     await this.mailerService.sendMail({
       to: user.email,
       subject: 'Reset Password',
-      text: `Your reset token is: ${token}`,
+      html: resetPasswordTemplate({
+        otp: otp.toString(),
+        expiresInMinutes: 15,
+        appName: 'Cuentista',
+      }),
     });
   }
 
   async resetPassword(dto: ResetPassDto) {
-    const { token, password } = dto;
+    const { otp, email, password } = dto;
 
-    const hashedToken = crypto.createHash('sha256').update(token).digest('hex');
-
-    const user = await this.userModel.findOne({
-      where: {
-        resetPasswordToken: hashedToken,
-        resetPasswordExpiresAt: {
-          [Op.gt]: new Date(),
-        },
-      },
-    });
-
+    const user = await this.userModel.findOne({ where: { email } });
     if (!user) throw new BadRequestException(Messages.NOT_FOUND);
+
+    if (!user.resetPasswordOtp || !user.resetPasswordOtpExpiresAt) {
+      throw new BadRequestException(Messages.INVALID_OTP);
+    }
+
+    if (user.resetPasswordOtpExpiresAt < new Date()) {
+      throw new BadRequestException(Messages.INVALID_OTP);
+    }
+
+    const isOtpValid = await compare(otp.toString(), user.resetPasswordOtp);
+    if (!isOtpValid) throw new BadRequestException(Messages.INVALID_OTP);
 
     user.password = password;
 
-    user.resetPasswordToken = null;
-    user.resetPasswordExpiresAt = null;
+    user.resetPasswordOtp = null;
+    user.resetPasswordOtpExpiresAt = null;
 
     await user.save();
   }
