@@ -22,6 +22,12 @@ export interface RequestPayload extends Request {
   };
 }
 
+export interface ResetPasswordTemplateProps {
+  otp: string;
+  expiresInMinutes?: number;
+  appName?: string;
+}
+
 export interface UserCreationAttributes {
   name: string;
   email: string;

@@ -1,8 +1,4 @@
-interface ResetPasswordTemplateProps {
-  otp: string;
-  expiresInMinutes?: number;
-  appName?: string;
-}
+import { ResetPasswordTemplateProps } from '../utils/constants/interfaces';
 
 export const resetPasswordTemplate = ({
   otp,
