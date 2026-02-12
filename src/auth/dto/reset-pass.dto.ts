@@ -4,6 +4,7 @@ import {
   IsString,
   IsStrongPassword,
   IsEmail,
+  Length,
 } from 'class-validator';
 import { Match } from '../../libs/services/decorators/match.decorator';
 
@@ -11,8 +12,10 @@ export class ResetPassDto {
   @ApiProperty({ example: 'token' })
   @IsNotEmpty()
   @IsString()
-  otp: number;
+  @Length(6, 6)
+  otp: string;
 
+  @ApiProperty({ example: 'user@gmail.com' })
   @IsNotEmpty()
   @IsEmail()
   email: string;
