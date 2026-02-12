@@ -1,5 +1,7 @@
-export interface ResponseData<T = unknown> {
-  status: string;
+import { StatusType } from './enums';
+
+export interface ResponseHandlerOptions<T = unknown> {
+  status: StatusType;
   statusCode: number;
   message?: string;
   data?: T;

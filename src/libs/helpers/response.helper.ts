@@ -1,4 +1,6 @@
-import { ResponseData } from '../utils/constants/interfaces';
+import { HttpStatus } from '@nestjs/common';
+import { ResponseHandlerOptions } from '../utils/constants/interfaces';
+import { StatusType } from '../utils/constants/enums';
 
 export function responseHandler<T>({
   status,
@@ -7,11 +9,17 @@ export function responseHandler<T>({
   data,
   error,
 }: {
-  status: string;
+  status: StatusType;
   statusCode: number;
   message?: string;
   data?: T;
   error?: unknown;
-}): ResponseData<T> {
-  return { status, statusCode, message, data, error };
+}): ResponseHandlerOptions<T> {
+  return {
+    status,
+    statusCode: statusCode || HttpStatus.OK,
+    message,
+    data: data || undefined,
+    error: error || undefined,
+  };
 }
