@@ -2,6 +2,7 @@ import {
   AllowNull,
   AutoIncrement,
   Column,
+  Default,
   HasMany,
   HasOne,
   Model,
@@ -22,7 +23,9 @@ interface ProductCreationAttributes {
 
 @Table({
   tableName: 'products',
-  defaultScope: { attributes: { exclude: ['createdAt', 'updatedAt'] } },
+  defaultScope: {
+    attributes: { exclude: ['is_active', 'createdAt', 'updatedAt'] },
+  },
 })
 export class Product extends Model<Product, ProductCreationAttributes> {
   @PrimaryKey
@@ -42,18 +45,23 @@ export class Product extends Model<Product, ProductCreationAttributes> {
   @Column
   declare contact_us: string;
 
-  @HasOne(() => ProductImage, { onDelete: 'CASCADE', hooks: true })
+  @AllowNull(false)
+  @Default(true)
+  @Column
+  declare is_active: boolean;
+
+  @HasOne(() => ProductImage)
   declare product_images: ProductImage;
 
-  @HasMany(() => ProductBenefit, { onDelete: 'CASCADE' })
+  @HasMany(() => ProductBenefit)
   declare product_benefits: ProductBenefit[];
 
-  @HasMany(() => ProductService, { onDelete: 'CASCADE' })
+  @HasMany(() => ProductService)
   declare product_services: ProductService[];
 
-  @HasMany(() => ProductMethodology, { onDelete: 'CASCADE' })
+  @HasMany(() => ProductMethodology)
   declare product_methodologies: ProductMethodology[];
 
-  @HasMany(() => ProductExpertise, { onDelete: 'CASCADE' })
+  @HasMany(() => ProductExpertise)
   declare product_expertise: ProductExpertise[];
 }

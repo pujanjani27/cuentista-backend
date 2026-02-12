@@ -37,6 +37,6 @@ export class ProductService extends Model<
   @BelongsTo(() => Product)
   declare product: Product;
 
-  @HasMany(() => ProductServiceDetail, { onDelete: 'CASCADE' })
+  @HasMany(() => ProductServiceDetail)
   declare product_service_details: ProductServiceDetail[];
 }

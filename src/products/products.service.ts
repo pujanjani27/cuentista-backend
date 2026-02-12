@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateProductDto } from './dto/create-product.dto';
 // import { UpdateProductDto } from './dto/update-product.dto';
 import { Sequelize } from 'sequelize-typescript';
@@ -121,7 +121,7 @@ export class ProductsService {
 
     const offset = (page - 1) * limit;
 
-    const where = {};
+    const where = { is_active: true };
 
     if (search) {
       where['name'] = {
@@ -154,7 +154,8 @@ export class ProductsService {
   }
 
   async findOne(id: number) {
-    return await this.productModel.findByPk(id, {
+    return await this.productModel.findOne({
+      where: { id, is_active: true },
       include: [
         { model: this.productImageModel },
         { model: this.productBenefitModel },
@@ -169,6 +170,14 @@ export class ProductsService {
   }
 
   async update(id: number, dto: UpdateProductDto) {
+    const existingProduct = await this.productModel.findOne({
+      where: { id, is_active: true },
+    });
+
+    if (!existingProduct) {
+      throw new NotFoundException();
+    }
+
     await this.sequelize.transaction(async (t) => {
       // update product
       await this.productModel.update(
@@ -299,6 +308,6 @@ export class ProductsService {
   }
 
   async remove(id: number) {
-    await this.productModel.destroy({ where: { id } });
+    await this.productModel.update({ is_active: false }, { where: { id } });
   }
 }
