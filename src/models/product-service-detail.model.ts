@@ -7,11 +7,7 @@ import {
   Table,
 } from 'sequelize-typescript';
 import { ProductService } from './product-service.model';
-
-interface ProductServiceDetailCreationAttributes {
-  product_service_id: number;
-  detail: string;
-}
+import { ProductServiceDetailCreationAttributes } from 'src/libs/utils/constants/interfaces';
 
 @Table({
   tableName: 'product_service_details',

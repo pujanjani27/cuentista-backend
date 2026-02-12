@@ -7,11 +7,7 @@ import {
   Table,
 } from 'sequelize-typescript';
 import { Product } from './product.model';
-
-interface ProductMethodologyCreationAttributes {
-  product_id: number;
-  steps: string;
-}
+import { ProductMethodologyCreationAttributes } from 'src/libs/utils/constants/interfaces';
 
 @Table({
   tableName: 'product_methodologies',

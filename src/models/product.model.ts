@@ -14,12 +14,7 @@ import { ProductMethodology } from './product-methodology.model';
 import { ProductBenefit } from './product-benefit.model';
 import { ProductService } from './product-service.model';
 import { ProductExpertise } from './product-expertise.model';
-
-interface ProductCreationAttributes {
-  name: string;
-  description: string;
-  contact_us: string;
-}
+import { ProductCreationAttributes } from 'src/libs/utils/constants/interfaces';
 
 @Table({
   tableName: 'products',

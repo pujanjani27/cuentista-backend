@@ -7,14 +7,7 @@ import {
   Table,
 } from 'sequelize-typescript';
 import { Product } from './product.model';
-
-interface ProductImageCreationAttributes {
-  product_id: number;
-  overview_image: string;
-  service_image: string;
-  right_sidebar_image_1: string;
-  right_sidebar_image_2: string;
-}
+import { ProductImageCreationAttributes } from 'src/libs/utils/constants/interfaces';
 
 @Table({
   tableName: 'product_images',

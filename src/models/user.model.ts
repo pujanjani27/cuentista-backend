@@ -11,27 +11,12 @@ import {
 } from 'sequelize-typescript';
 import { hash } from 'bcrypt';
 import { UserRoles } from 'src/libs/utils/constants/enums';
-
-interface UserAttributes {
-  name: string;
-  email: string;
-  password: string;
-  role: string;
-  resetPasswordOtp?: string | null;
-  resetPasswordOtpExpiresAt?: Date | null;
-}
-
-interface UserCreationAttributes {
-  name: string;
-  email: string;
-  password: string;
-  role: string;
-}
+import { UserCreationAttributes } from 'src/libs/utils/constants/interfaces';
 
 @Table({
   tableName: 'users',
 })
-export class User extends Model<UserAttributes, UserCreationAttributes> {
+export class User extends Model<User, UserCreationAttributes> {
   @AllowNull(false)
   @Column
   declare name: string;
@@ -50,10 +35,10 @@ export class User extends Model<UserAttributes, UserCreationAttributes> {
   declare role: UserRoles;
 
   @Column(DataType.STRING)
-  declare resetPasswordOtp: string | null;
+  declare resetPasswordOtp?: string | null;
 
   @Column(DataType.DATE)
-  declare resetPasswordOtpExpiresAt: Date | null;
+  declare resetPasswordOtpExpiresAt?: Date | null;
 
   @BeforeCreate
   @BeforeUpdate
