@@ -1,4 +1,5 @@
 export enum Messages {
+  SERVER_CONNECTION = 'Server is running on port',
   ALREADY_EXIST = 'already exists.',
   NOT_FOUND = 'not found.',
   FAILED_TO_CREATE = 'failed to create',

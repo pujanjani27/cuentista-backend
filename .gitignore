@@ -2,10 +2,7 @@
 /dist
 /node_modules
 /build
-
-# public
-/public/images/products/*
-!/public/images/products/.gitkeep
+/public
 
 # Logs
 logs
