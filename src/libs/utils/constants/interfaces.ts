@@ -74,3 +74,44 @@ export interface ProductBenefitCreationAttributes {
   product_id: number;
   description: string;
 }
+
+export interface ServiceCreationAttributes {
+  name: string;
+  description: string;
+  contact_us: string;
+}
+
+export interface ServiceImageCreationAttributes {
+  service_id: number;
+  overview_image: string;
+  service_image: string;
+  right_sidebar_image_1: string;
+  right_sidebar_image_2: string;
+}
+
+export interface ServiceSubServiceCreationAttributes {
+  service_id: number;
+  title: string;
+  description: string;
+}
+
+export interface ServiceApproachCreationAttributes {
+  service_id: number;
+  description: string;
+}
+
+export interface ServiceAtcCreationAttributes {
+  service_id: number;
+  description: string;
+}
+
+export interface ServiceBenefitCreationAttributes {
+  service_id: number;
+  description: string;
+}
+
+export interface ServiceConsultingCreationAttributes {
+  service_id: number;
+  title: string;
+  description: string;
+}
