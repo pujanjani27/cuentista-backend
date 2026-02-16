@@ -16,6 +16,7 @@ import { StatusType } from 'src/libs/utils/constants/enums';
 import { Messages } from 'src/libs/utils/constants/messages';
 import { ListOfServiceDto } from './dto/list-of-service.dto';
 import { Op, Order } from 'sequelize';
+import { UpdateServiceDto } from './dto/update-service.dto';
 
 @Injectable()
 export class ServicesService {
@@ -187,5 +188,127 @@ export class ServicesService {
       statusCode: HttpStatus.OK,
       data: findService,
     });
+  }
+
+  async updateService(id: number, dto: UpdateServiceDto) {
+    const findService = await this.serviceModel.findByPk(id);
+
+    if (!findService) {
+      return responseHandler({
+        status: StatusType.ERROR,
+        statusCode: HttpStatus.NOT_FOUND,
+        message: `Service ${Messages.NOT_FOUND}`,
+      });
+    }
+
+    try {
+      await this.sequelize.transaction(async (t) => {
+        await this.serviceModel.update(
+          {
+            name: dto.name,
+            description: dto.description,
+            contact_us: dto.contact_us,
+          },
+          { where: { id }, transaction: t },
+        );
+
+        await this.serviceImageModel.destroy({
+          where: { service_id: id },
+          transaction: t,
+        });
+
+        await this.serviceSubServiceModel.destroy({
+          where: { service_id: id },
+        });
+
+        await this.serviceApproachModel.destroy({
+          where: { service_id: id },
+        });
+
+        await this.serviceAtcModel.destroy({
+          where: { service_id: id },
+        });
+
+        await this.serviceBenefitModel.destroy({
+          where: { service_id: id },
+        });
+
+        await this.serviceConsultingModel.destroy({
+          where: { service_id: id },
+        });
+
+        await this.serviceImageModel.create(
+          {
+            service_id: id,
+            ...dto.service_images,
+          },
+          { transaction: t },
+        );
+
+        if (dto.service_sub_services?.length) {
+          await this.serviceSubServiceModel.bulkCreate(
+            dto.service_sub_services.map((subService) => ({
+              service_id: id,
+              title: subService.title,
+              description: subService.description,
+            })),
+            { transaction: t },
+          );
+        }
+
+        if (dto.service_approaches?.length) {
+          await this.serviceApproachModel.bulkCreate(
+            dto.service_approaches.map((approach) => ({
+              service_id: id,
+              description: approach.description,
+            })),
+            { transaction: t },
+          );
+        }
+
+        if (dto.service_atc?.length) {
+          await this.serviceAtcModel.bulkCreate(
+            dto.service_atc.map((atc) => ({
+              service_id: id,
+              description: atc.description,
+            })),
+            { transaction: t },
+          );
+        }
+
+        if (dto.service_benefits?.length) {
+          await this.serviceBenefitModel.bulkCreate(
+            dto.service_benefits.map((benefit) => ({
+              service_id: id,
+              description: benefit.description,
+            })),
+            { transaction: t },
+          );
+        }
+
+        if (dto.service_consulting?.length) {
+          await this.serviceConsultingModel.bulkCreate(
+            dto.service_consulting.map((consulting) => ({
+              service_id: id,
+              title: consulting.title,
+              description: consulting.description,
+            })),
+            { transaction: t },
+          );
+        }
+      });
+
+      return responseHandler({
+        status: StatusType.SUCCESS,
+        statusCode: HttpStatus.OK,
+        message: `Service ${Messages.UPDATED}`,
+      });
+    } catch {
+      return responseHandler({
+        status: StatusType.ERROR,
+        statusCode: HttpStatus.BAD_REQUEST,
+        message: `${Messages.FAILED_TO_UPDATE} service`,
+      });
+    }
   }
 }

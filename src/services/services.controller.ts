@@ -8,6 +8,7 @@ import {
   Query,
   Get,
   Param,
+  Put,
 } from '@nestjs/common';
 import { ServicesService } from './services.service';
 import { CreateServiceDto } from './dto/create-service.dto';
@@ -17,6 +18,7 @@ import { RolesGuard } from 'src/libs/services/guards/role.guard';
 import { Roles } from 'src/libs/services/decorators/role.decorator';
 import { UserRoles } from 'src/libs/utils/constants/enums';
 import { ListOfServiceDto } from './dto/list-of-service.dto';
+import { UpdateServiceDto } from './dto/update-service.dto';
 
 @ApiBearerAuth()
 @Controller('services')
@@ -48,5 +50,14 @@ export class ServicesController {
   @Get(':id')
   async getServiceById(@Param('id') id: string) {
     return await this.servicesService.getServiceById(+id);
+  }
+
+  @ApiOperation({ summary: 'Update service' })
+  @UseGuards(JwtGuard, RolesGuard)
+  @Roles(UserRoles.ADMIN)
+  @HttpCode(HttpStatus.OK)
+  @Put(':id')
+  async updateService(@Param('id') id: string, @Body() dto: UpdateServiceDto) {
+    return await this.servicesService.updateService(+id, dto);
   }
 }
