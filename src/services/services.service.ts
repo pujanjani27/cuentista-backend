@@ -17,6 +17,7 @@ import { Messages } from 'src/libs/utils/constants/messages';
 import { ListOfServiceDto } from './dto/list-of-service.dto';
 import { Op, Order } from 'sequelize';
 import { UpdateServiceDto } from './dto/update-service.dto';
+import { Transaction } from 'sequelize';
 
 @Injectable()
 export class ServicesService {
@@ -47,65 +48,7 @@ export class ServicesService {
           { transaction: t },
         );
 
-        await this.serviceImageModel.create(
-          {
-            service_id: createdService.id,
-            ...dto.service_images,
-          },
-          { transaction: t },
-        );
-
-        if (dto.service_sub_services?.length) {
-          await this.serviceSubServiceModel.bulkCreate(
-            dto.service_sub_services.map((subService) => ({
-              service_id: createdService.id,
-              title: subService.title,
-              description: subService.description,
-            })),
-            { transaction: t },
-          );
-        }
-
-        if (dto.service_approaches?.length) {
-          await this.serviceApproachModel.bulkCreate(
-            dto.service_approaches.map((approach) => ({
-              service_id: createdService.id,
-              description: approach.description,
-            })),
-            { transaction: t },
-          );
-        }
-
-        if (dto.service_atc?.length) {
-          await this.serviceAtcModel.bulkCreate(
-            dto.service_atc.map((atc) => ({
-              service_id: createdService.id,
-              description: atc.description,
-            })),
-            { transaction: t },
-          );
-        }
-
-        if (dto.service_benefits?.length) {
-          await this.serviceBenefitModel.bulkCreate(
-            dto.service_benefits.map((benefit) => ({
-              service_id: createdService.id,
-              description: benefit.description,
-            })),
-            { transaction: t },
-          );
-        }
-
-        if (dto.service_consulting?.length) {
-          await this.serviceConsultingModel.bulkCreate(
-            dto.service_consulting.map((consulting) => ({
-              service_id: createdService.id,
-              title: consulting.title,
-              description: consulting.description,
-            })),
-            { transaction: t },
-          );
-        }
+        await this.createServiceRelations(createdService.id, dto, t);
       });
 
       return responseHandler({
@@ -212,90 +155,8 @@ export class ServicesService {
           { where: { id }, transaction: t },
         );
 
-        await this.serviceImageModel.destroy({
-          where: { service_id: id },
-          transaction: t,
-        });
-
-        await this.serviceSubServiceModel.destroy({
-          where: { service_id: id },
-        });
-
-        await this.serviceApproachModel.destroy({
-          where: { service_id: id },
-        });
-
-        await this.serviceAtcModel.destroy({
-          where: { service_id: id },
-        });
-
-        await this.serviceBenefitModel.destroy({
-          where: { service_id: id },
-        });
-
-        await this.serviceConsultingModel.destroy({
-          where: { service_id: id },
-        });
-
-        await this.serviceImageModel.create(
-          {
-            service_id: id,
-            ...dto.service_images,
-          },
-          { transaction: t },
-        );
-
-        if (dto.service_sub_services?.length) {
-          await this.serviceSubServiceModel.bulkCreate(
-            dto.service_sub_services.map((subService) => ({
-              service_id: id,
-              title: subService.title,
-              description: subService.description,
-            })),
-            { transaction: t },
-          );
-        }
-
-        if (dto.service_approaches?.length) {
-          await this.serviceApproachModel.bulkCreate(
-            dto.service_approaches.map((approach) => ({
-              service_id: id,
-              description: approach.description,
-            })),
-            { transaction: t },
-          );
-        }
-
-        if (dto.service_atc?.length) {
-          await this.serviceAtcModel.bulkCreate(
-            dto.service_atc.map((atc) => ({
-              service_id: id,
-              description: atc.description,
-            })),
-            { transaction: t },
-          );
-        }
-
-        if (dto.service_benefits?.length) {
-          await this.serviceBenefitModel.bulkCreate(
-            dto.service_benefits.map((benefit) => ({
-              service_id: id,
-              description: benefit.description,
-            })),
-            { transaction: t },
-          );
-        }
-
-        if (dto.service_consulting?.length) {
-          await this.serviceConsultingModel.bulkCreate(
-            dto.service_consulting.map((consulting) => ({
-              service_id: id,
-              title: consulting.title,
-              description: consulting.description,
-            })),
-            { transaction: t },
-          );
-        }
+        await this.deleteServiceRelations(id, t);
+        await this.createServiceRelations(id, dto, t);
       });
 
       return responseHandler({
@@ -330,5 +191,111 @@ export class ServicesService {
       statusCode: HttpStatus.OK,
       message: `Service ${Messages.DELETED}`,
     });
+  }
+
+  private async createServiceRelations(
+    serviceId: number,
+    dto: CreateServiceDto | UpdateServiceDto,
+    transaction: Transaction,
+  ) {
+    // Service Image
+    if (dto.service_images) {
+      await this.serviceImageModel.create(
+        {
+          service_id: serviceId,
+          ...dto.service_images,
+        },
+        { transaction },
+      );
+    }
+
+    // Sub Services
+    if (dto.service_sub_services?.length) {
+      await this.serviceSubServiceModel.bulkCreate(
+        dto.service_sub_services.map((subService) => ({
+          service_id: serviceId,
+          title: subService.title,
+          description: subService.description,
+        })),
+        { transaction },
+      );
+    }
+
+    // Approaches
+    if (dto.service_approaches?.length) {
+      await this.serviceApproachModel.bulkCreate(
+        dto.service_approaches.map((approach) => ({
+          service_id: serviceId,
+          description: approach.description,
+        })),
+        { transaction },
+      );
+    }
+
+    // ATC
+    if (dto.service_atc?.length) {
+      await this.serviceAtcModel.bulkCreate(
+        dto.service_atc.map((atc) => ({
+          service_id: serviceId,
+          description: atc.description,
+        })),
+        { transaction },
+      );
+    }
+
+    // Benefits
+    if (dto.service_benefits?.length) {
+      await this.serviceBenefitModel.bulkCreate(
+        dto.service_benefits.map((benefit) => ({
+          service_id: serviceId,
+          description: benefit.description,
+        })),
+        { transaction },
+      );
+    }
+
+    // Consulting
+    if (dto.service_consulting?.length) {
+      await this.serviceConsultingModel.bulkCreate(
+        dto.service_consulting.map((consulting) => ({
+          service_id: serviceId,
+          title: consulting.title,
+          description: consulting.description,
+        })),
+        { transaction },
+      );
+    }
+  }
+
+  private async deleteServiceRelations(
+    serviceId: number,
+    transaction: Transaction,
+  ) {
+    await Promise.all([
+      this.serviceImageModel.destroy({
+        where: { service_id: serviceId },
+        transaction,
+      }),
+      this.serviceSubServiceModel.destroy({
+        where: { service_id: serviceId },
+        transaction,
+      }),
+      this.serviceApproachModel.destroy({
+        where: { service_id: serviceId },
+        transaction,
+      }),
+      this.serviceAtcModel.destroy({
+        where: { service_id: serviceId },
+        transaction,
+      }),
+      this.serviceBenefitModel.destroy({
+        where: { service_id: serviceId },
+        transaction,
+      }),
+      this.serviceConsultingModel.destroy({
+        where: { service_id: serviceId },
+        transaction,
+      }),
+    ]);
   }
 }
