@@ -14,6 +14,8 @@ import { Sequelize } from 'sequelize-typescript';
 import { responseHandler } from 'src/libs/helpers/response.helper';
 import { StatusType } from 'src/libs/utils/constants/enums';
 import { Messages } from 'src/libs/utils/constants/messages';
+import { ListOfServiceDto } from './dto/list-of-service.dto';
+import { Op, Order } from 'sequelize';
 
 @Injectable()
 export class ServicesService {
@@ -117,5 +119,46 @@ export class ServicesService {
         message: `${Messages.FAILED_TO_CREATE} service`,
       });
     }
+  }
+
+  async listServices(query: ListOfServiceDto) {
+    const { page = 1, limit = 10, sortKey, sortValue, search } = query;
+
+    const offset = (page - 1) * limit;
+
+    const where = {};
+
+    if (search) {
+      where['name'] = {
+        [Op.like]: `%${search}%`,
+      };
+    }
+
+    let order: Order = [];
+    if (sortKey && sortValue) {
+      order = [[sortKey, sortValue]];
+    }
+
+    const listOfService = await this.serviceModel.findAndCountAll({
+      where,
+      order,
+      offset,
+      limit,
+      attributes: { exclude: ['description', 'contact_us'] },
+    });
+
+    return responseHandler({
+      status: StatusType.SUCCESS,
+      statusCode: HttpStatus.OK,
+      data: {
+        services: listOfService.rows,
+        meta: {
+          current_page: page,
+          limit,
+          total_services: listOfService.count,
+          total_pages: Math.ceil(listOfService.count / limit),
+        },
+      },
+    });
   }
 }
