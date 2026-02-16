@@ -9,7 +9,12 @@ import {
 import { ServiceConsultingCreationAttributes } from 'src/libs/utils/constants/interfaces';
 import { Service } from './service.model';
 
-@Table({ tableName: 'service_consulting' })
+@Table({
+  tableName: 'service_consulting',
+  defaultScope: {
+    attributes: { exclude: ['service_id', 'createdAt', 'updatedAt'] },
+  },
+})
 export class ServiceConsulting extends Model<
   ServiceConsulting,
   ServiceConsultingCreationAttributes

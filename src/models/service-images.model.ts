@@ -9,7 +9,12 @@ import {
 import { ServiceImageCreationAttributes } from 'src/libs/utils/constants/interfaces';
 import { Service } from './service.model';
 
-@Table({ tableName: 'service_images' })
+@Table({
+  tableName: 'service_images',
+  defaultScope: {
+    attributes: { exclude: ['service_id', 'createdAt', 'updatedAt'] },
+  },
+})
 export class ServiceImage extends Model<
   ServiceImage,
   ServiceImageCreationAttributes

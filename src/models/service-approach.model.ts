@@ -9,7 +9,12 @@ import {
 import { ServiceApproachCreationAttributes } from 'src/libs/utils/constants/interfaces';
 import { Service } from './service.model';
 
-@Table({ tableName: 'service_approaches' })
+@Table({
+  tableName: 'service_approaches',
+  defaultScope: {
+    attributes: { exclude: ['service_id', 'createdAt', 'updatedAt'] },
+  },
+})
 export class ServiceApproach extends Model<
   ServiceApproach,
   ServiceApproachCreationAttributes

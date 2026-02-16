@@ -18,6 +18,11 @@ import { ServiceConsulting } from './service-consulting.model';
 
 @Table({
   tableName: 'services',
+  paranoid: true,
+  timestamps: true,
+  defaultScope: {
+    attributes: { exclude: ['createdAt', 'updatedAt', 'deletedAt'] },
+  },
 })
 export class Service extends Model<Service, ServiceCreationAttributes> {
   @PrimaryKey
