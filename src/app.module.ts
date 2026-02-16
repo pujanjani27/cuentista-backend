@@ -8,6 +8,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { ProductsModule } from './products/products.module';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
+import { CommonModule } from './common/common.module';
 import { ServicesModule } from './services/services.module';
 
 @Module({
@@ -51,6 +52,7 @@ import { ServicesModule } from './services/services.module';
     AuthModule,
     ProductsModule,
     ServicesModule,
+    CommonModule,
   ],
   controllers: [AppController],
   providers: [AppService],

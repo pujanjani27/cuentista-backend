@@ -10,8 +10,6 @@ import {
   Query,
   Param,
   Put,
-  UseInterceptors,
-  UploadedFile,
 } from '@nestjs/common';
 import { ProductsService } from './products.service';
 import { CreateProductDto } from './dto/create-product.dto';
@@ -20,16 +18,8 @@ import { JwtGuard } from 'src/libs/services/guards/jwt.guard';
 import { RolesGuard } from 'src/libs/services/guards/role.guard';
 import { Roles } from 'src/libs/services/decorators/role.decorator';
 import { UserRoles } from 'src/libs/utils/constants/enums';
-import {
-  ApiBearerAuth,
-  ApiBody,
-  ApiConsumes,
-  ApiOperation,
-} from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation } from '@nestjs/swagger';
 import { ListOfUserDto } from './dto/list-of-product.dto';
-import { UploadImageDto } from './dto/upload-image.dto';
-import { FileInterceptor } from '@nestjs/platform-express';
-import { upload } from 'src/libs/helpers/upload-file.helper';
 
 @ApiBearerAuth()
 @Controller('products')
@@ -82,17 +72,5 @@ export class ProductsController {
   @Delete(':id')
   async remove(@Param('id') id: string) {
     return await this.productsService.remove(+id);
-  }
-
-  @ApiOperation({ summary: 'Upload Product image' })
-  @ApiConsumes('multipart/form-data')
-  @ApiBody({ type: UploadImageDto })
-  @UseGuards(JwtGuard, RolesGuard)
-  @Roles(UserRoles.ADMIN)
-  @UseInterceptors(FileInterceptor('file', upload))
-  @HttpCode(HttpStatus.OK)
-  @Post('/imageUpload')
-  uploadImage(@UploadedFile() file: Express.Multer.File) {
-    return this.productsService.imageUpload(file);
   }
 }
