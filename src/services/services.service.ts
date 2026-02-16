@@ -311,4 +311,24 @@ export class ServicesService {
       });
     }
   }
+
+  async deleteService(id: number) {
+    const findService = await this.serviceModel.findByPk(id);
+
+    if (!findService) {
+      return responseHandler({
+        status: StatusType.ERROR,
+        statusCode: HttpStatus.NOT_FOUND,
+        message: `Service ${Messages.NOT_FOUND}`,
+      });
+    }
+
+    await this.serviceModel.destroy({ where: { id } });
+
+    return responseHandler({
+      status: StatusType.SUCCESS,
+      statusCode: HttpStatus.OK,
+      message: `Service ${Messages.DELETED}`,
+    });
+  }
 }

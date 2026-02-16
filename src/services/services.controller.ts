@@ -9,6 +9,7 @@ import {
   Get,
   Param,
   Put,
+  Delete,
 } from '@nestjs/common';
 import { ServicesService } from './services.service';
 import { CreateServiceDto } from './dto/create-service.dto';
@@ -59,5 +60,14 @@ export class ServicesController {
   @Put(':id')
   async updateService(@Param('id') id: string, @Body() dto: UpdateServiceDto) {
     return await this.servicesService.updateService(+id, dto);
+  }
+
+  @ApiOperation({ summary: 'Delete service' })
+  @UseGuards(JwtGuard, RolesGuard)
+  @Roles(UserRoles.ADMIN)
+  @HttpCode(HttpStatus.OK)
+  @Delete(':id')
+  async deleteService(@Param('id') id: string) {
+    return await this.servicesService.deleteService(+id);
   }
 }
