@@ -2,6 +2,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import {
   IsNotEmpty,
+  IsObject,
   IsOptional,
   IsString,
   ValidateNested,
@@ -94,6 +95,7 @@ export class CreateProductDto {
   @ApiProperty({ type: () => ProductImageDto })
   @IsNotEmpty()
   @ValidateNested()
+  @IsObject()
   @Type(() => ProductImageDto)
   product_images: ProductImageDto;
 
