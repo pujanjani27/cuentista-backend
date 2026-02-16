@@ -7,6 +7,7 @@ import {
   UseGuards,
   Query,
   Get,
+  Param,
 } from '@nestjs/common';
 import { ServicesService } from './services.service';
 import { CreateServiceDto } from './dto/create-service.dto';
@@ -31,12 +32,21 @@ export class ServicesController {
     return await this.servicesService.create(dto);
   }
 
-  @ApiOperation({ summary: 'Get all service' })
+  @ApiOperation({ summary: 'List of service' })
   @UseGuards(JwtGuard, RolesGuard)
   @Roles(UserRoles.ADMIN)
   @HttpCode(HttpStatus.OK)
   @Get('list')
   async listServices(@Query() query: ListOfServiceDto) {
     return await this.servicesService.listServices(query);
+  }
+
+  @ApiOperation({ summary: 'Get service by id' })
+  @UseGuards(JwtGuard, RolesGuard)
+  @Roles(UserRoles.ADMIN)
+  @HttpCode(HttpStatus.OK)
+  @Get(':id')
+  async getServiceById(@Param('id') id: string) {
+    return await this.servicesService.getServiceById(+id);
   }
 }

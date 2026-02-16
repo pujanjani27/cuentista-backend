@@ -161,4 +161,31 @@ export class ServicesService {
       },
     });
   }
+
+  async getServiceById(id: number) {
+    const findService = await this.serviceModel.findByPk(id, {
+      include: [
+        { model: this.serviceImageModel },
+        { model: this.serviceSubServiceModel },
+        { model: this.serviceApproachModel },
+        { model: this.serviceAtcModel },
+        { model: this.serviceBenefitModel },
+        { model: this.serviceConsultingModel },
+      ],
+    });
+
+    if (!findService) {
+      return responseHandler({
+        status: StatusType.ERROR,
+        statusCode: HttpStatus.NOT_FOUND,
+        message: `Service ${Messages.NOT_FOUND}`,
+      });
+    }
+
+    return responseHandler({
+      status: StatusType.SUCCESS,
+      statusCode: HttpStatus.OK,
+      data: findService,
+    });
+  }
 }
